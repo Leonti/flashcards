@@ -14,10 +14,11 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:context="rocks.leonti.flashcards.FlashCard"
             android:orientation="vertical"
-            android:gravity="center_horizontal"
+            android:layout_gravity="center"
+            android:gravity="center_vertical|center_horizontal"
             android:padding="14dp">
 
             <TextView
@@ -26,14 +27,16 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="abrasive"
                 android:textStyle="bold"
-                android:id="@+id/word_front" />
+                android:id="@+id/word_front"
+                android:textSize="35dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="(adj)"
-                android:id="@+id/types_front" />
+                android:id="@+id/types_front"
+                android:textSize="25dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -41,7 +44,8 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="uh-BRAY-siv"
                 android:id="@+id/pronunciation_front"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:textSize="25dp" />
         </LinearLayout>
     </ScrollView>
 
@@ -127,21 +131,6 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Caustic (capable of burning or corroding; extremely critical or sarcastic), Excoriate (to rub the skin off of; to criticize very harshly)"
                 android:id="@+id/related_words" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Etymology:"
-                android:id="@+id/info_label"
-                android:layout_marginTop="10dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Like caustic and excoriate, abrasive can be used literally or metaphorically. You scrub a dirty pan with something abrasive, such as steel wool. Harsh criticism is abrasive, like being scrubbed with steel wool."
-                android:id="@+id/info" />
 
         </LinearLayout>
     </ScrollView>

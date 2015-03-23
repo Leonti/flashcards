@@ -32,7 +32,7 @@ public class CardsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_cards);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Advanced");
+        toolbar.setTitle("Learn");
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

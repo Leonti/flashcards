@@ -24,32 +24,6 @@
             android:background="#fff"
             android:layout_height="match_parent">
 
-            <TextView
-                android:layout_centerInParent="true"
-                android:layout_width="wrap_content"
-                android:textColor="#000"
-                android:text="Activity Content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cards"
-                android:id="@+id/button_cards"
-                android:layout_below="@+id/textView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="26dp" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Settings"
-                android:id="@+id/button_settings"
-                android:layout_below="@+id/button_cards"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="26dp" />
-
             <ListView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

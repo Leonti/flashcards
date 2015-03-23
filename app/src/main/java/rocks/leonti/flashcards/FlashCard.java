@@ -64,9 +64,13 @@ public class FlashCard extends Fragment {
         ((TextView) view.findViewById(R.id.pronunciation)).setText(toStringList(word.pronunciation));
         ((TextView) view.findViewById(R.id.definition)).setText(toStringList(word.definition));
         ((TextView) view.findViewById(R.id.usage)).setText(toStringList(word.usage));
-        ((TextView) view.findViewById(R.id.related_words)).setText(toStringList(word.relatedWords));
-        ((TextView) view.findViewById(R.id.info)).setText(word.info);
 
+        if (word.relatedWords.size() > 0) {
+            ((TextView) view.findViewById(R.id.related_words)).setText(toStringList(word.relatedWords));
+        } else {
+            view.findViewById(R.id.related_words_label).setVisibility(View.GONE);
+            view.findViewById(R.id.related_words).setVisibility(View.GONE);
+        }
         final GestureDetectorCompat gestureDetector = new GestureDetectorCompat(getActivity(), new GestureDetector.SimpleOnGestureListener() {
 
             @Override

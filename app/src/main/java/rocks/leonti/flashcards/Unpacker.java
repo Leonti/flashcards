@@ -151,7 +151,9 @@ public class Unpacker extends AsyncTask<Void, Void, Void> {
         List<Word.Type> values = new LinkedList<>();
 
         for (String type : types) {
-            values.add(Word.Type.valueOf(type));
+            if (!values.contains(Word.Type.valueOf(type))) {
+                values.add(Word.Type.valueOf(type));
+            }
         }
 
         return values;

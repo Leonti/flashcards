@@ -7,11 +7,14 @@ import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -34,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle drawerToggle;
     private ListView leftDrawerList;
     private ArrayAdapter<String> navigationDrawerAdapter;
-    private String[] leftSliderData = {"Home", "Android", "Sitemap", "About", "Contact Me"};
+    private String[] leftSliderData = {"Learn", "Review", "Settings", "About"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         navigationDrawerAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, leftSliderData);
         leftDrawerList.setAdapter(navigationDrawerAdapter);
+        leftDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         toolbar.setTitle("Eloquence");
         setSupportActionBar(toolbar);
@@ -55,27 +59,20 @@ public class MainActivity extends ActionBarActivity {
 
         initDrawer();
 
-        Button buttonCards = (Button) findViewById(R.id.button_cards);
-        buttonCards.setOnClickListener(new View.OnClickListener() {
+        ListView wordSetList = (ListView) findViewById(R.id.list_word_set);
+        final WordSetListAdapter wordSetListAdapter = new WordSetListAdapter(this);
+        wordSetList.setAdapter(wordSetListAdapter);
+
+        wordSetList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i("SET selected: ", "position " + position);
+
+                WordSet wordSet = (WordSet) wordSetListAdapter.getItem(position);
                 Intent intent = new Intent(MainActivity.this, CardsActivity.class);
                 startActivity(intent);
             }
         });
-
-        Button buttonSettings = (Button) findViewById(R.id.button_settings);
-        buttonSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        ListView wordSetList = (ListView) findViewById(R.id.list_word_set);
-        final WordSetListAdapter wordSetListAdapter = new WordSetListAdapter(this);
-        wordSetList.setAdapter(wordSetListAdapter);
 
         Unpacker unpacker = new Unpacker(this, new Handler(), new Runnable() {
             @Override
@@ -93,6 +90,28 @@ public class MainActivity extends ActionBarActivity {
         });
         unpacker.execute();
 
+    }
+
+    private void selectItem(int position) {
+
+        Log.i("DRAWER", "Drawer selected position: " + position);
+        if (position == 2) {
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        }
+
+        // Highlight the selected item, update the title, and close the drawer
+        leftDrawerList.setItemChecked(position, true);
+        setTitle(leftSliderData[position]);
+        drawerLayout.closeDrawer(Gravity.LEFT);
+    }
+
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
 
     public class WordSetListAdapter extends BaseAdapter {
@@ -139,8 +158,10 @@ public class MainActivity extends ActionBarActivity {
                 view = convertView;
             }
 
-            TextView textView = (TextView) view.findViewById(R.id.word_set_title);
-            textView.setText(getWordSets().get(position).name);
+            TextView wordSetTitle = (TextView) view.findViewById(R.id.word_set_title);
+            wordSetTitle.setText(getWordSets().get(position).name);
+            TextView wordSetDescription = (TextView) view.findViewById(R.id.word_set_description);
+            wordSetDescription.setText(getWordSets().get(position).description);
 
             return view;
         }
