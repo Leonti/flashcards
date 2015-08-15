@@ -2,10 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="rocks.leonti.flashcards.CardsActivity">
-    <item android:id="@+id/action_search"
-        android:icon="@drawable/abc_switch_thumb_material"
+    <item android:id="@+id/action_review"
+        android:icon="@drawable/ic_action_action_review"
         android:title="@string/action_review"
-        app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+        app:showAsAction="always" />
+    <item android:id="@+id/action_done"
+        android:icon="@drawable/ic_action_action_done"
+        android:title="@string/action_done"
+        app:showAsAction="always" />
 </menu>

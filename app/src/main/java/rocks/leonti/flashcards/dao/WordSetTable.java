@@ -28,6 +28,10 @@ public class WordSetTable extends DbTable<WordSet> {
                 COLUMN_COUNT + " integer);";
     }
 
+    public String queryById(long id) {
+        return "SELECT * FROM " + getTable() + " WHERE _id=" + id;
+    }
+
     @Override
     public ContentValues toContentValues(WordSet wordSet) {
         ContentValues values = new ContentValues();

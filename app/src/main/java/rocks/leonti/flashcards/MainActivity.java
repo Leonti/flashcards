@@ -66,10 +66,12 @@ public class MainActivity extends ActionBarActivity {
         wordSetList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("SET selected: ", "position " + position);
+                Log.i("MAIN ACTIVITY: ", "Set selected position " + position);
 
                 WordSet wordSet = (WordSet) wordSetListAdapter.getItem(position);
-                Intent intent = new Intent(MainActivity.this, CardsActivity.class);
+           //     Intent intent = new Intent(MainActivity.this, CardsActivity.class);
+                Intent intent = new Intent(MainActivity.this, LearnActivity.class);
+                intent.putExtra(LearnActivity.WORD_SET_ID, wordSet.id);
                 startActivity(intent);
             }
         });

@@ -18,8 +18,12 @@
         </activity>
         <activity
             android:name=".CardsActivity"
-            android:parentActivityName=".MainActivity"
             android:label="@string/title_activity_cards" >
+        </activity>
+        <activity
+            android:name=".LearnActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="@string/title_activity_learn" >
         </activity>
         <activity
             android:name=".SettingsActivity"

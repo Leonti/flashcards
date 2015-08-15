@@ -96,7 +96,7 @@ public class WordTable extends DbTable<Word> {
     }
 
     public String setReviewStatement(long id, Word.Review review) {
-        return "UPDATE " + getTable() + " SET " + COLUMN_REVIEW + " = '" + review.name() + "' + 1 WHERE _id=" + id;
+        return "UPDATE " + getTable() + " SET " + COLUMN_REVIEW + " = '" + review.name() + "' WHERE _id=" + id;
     }
 
     private List<String> toStrings(List<Word.Type> types) {

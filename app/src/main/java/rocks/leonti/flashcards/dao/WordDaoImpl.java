@@ -63,6 +63,14 @@ public class WordDaoImpl implements WordDao {
     }
 
     @Override
+    public WordSet getSet(long setId) {
+        try (Cursor cursor = database.rawQuery(wordSetTable.queryById(setId), null)) {
+            cursor.moveToFirst();
+            return wordSetTable.toEntity(cursor);
+        }
+    }
+
+    @Override
     public List<Word> getWords(long setId, int limit, int offset) {
         List<Word> words = new LinkedList<>();
 

@@ -16,6 +16,8 @@ public interface WordDao extends AutoCloseable {
 
     List<WordSet> getSets();
 
+    WordSet getSet(long setId);
+
     List<Word> getWords(long setId, int limit, int offset);
 
     void increaseView(long wordId);
