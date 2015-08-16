@@ -21,9 +21,17 @@
             android:label="@string/title_activity_cards" >
         </activity>
         <activity
-            android:name=".LearnActivity"
+            android:name=".ModeSelectorActivity"
             android:parentActivityName=".MainActivity"
             android:label="@string/title_activity_learn" >
+        </activity>
+        <activity
+            android:name=".LearnActivity"
+            android:label="@string/title_activity_learn" >
+        </activity>
+        <activity
+            android:name=".ReviewActivity"
+            android:label="@string/title_activity_review" >
         </activity>
         <activity
             android:name=".SettingsActivity"

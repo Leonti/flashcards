@@ -1,9 +1,9 @@
 package rocks.leonti.flashcards.dao;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -64,6 +64,7 @@ public class WordDaoImpl implements WordDao {
 
     @Override
     public WordSet getSet(long setId) {
+        Log.i("WORD DAO", "Getting set " + setId);
         try (Cursor cursor = database.rawQuery(wordSetTable.queryById(setId), null)) {
             cursor.moveToFirst();
             return wordSetTable.toEntity(cursor);
@@ -72,17 +73,61 @@ public class WordDaoImpl implements WordDao {
 
     @Override
     public List<Word> getWords(long setId, int limit, int offset) {
-        List<Word> words = new LinkedList<>();
 
         try(Cursor cursor = database.rawQuery(wordTable.queryWithOffset(setId, limit, offset), null)) {
+            return cursorToWords(cursor);
+        }
+    }
+
+    @Override
+    public List<Word> getWords(long setId, int limit, int offset, Word.Review review) {
+
+        try(Cursor cursor = database.rawQuery(wordTable.queryWithOffset(setId, limit, offset, review), null)) {
+            return cursorToWords(cursor);
+        }
+    }
+
+    @Override
+    public List<Word> getWords(long[] wordIds) {
+
+        try(Cursor cursor = database.rawQuery(wordTable.queryForIds(wordIds), null)) {
+            return cursorToWords(cursor);
+        }
+    }
+
+    private List<Word> cursorToWords(Cursor cursor) {
+        List<Word> words = new LinkedList<>();
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+
+            words.add(wordTable.toEntity(cursor));
+            cursor.moveToNext();
+        }
+
+        return words;
+    }
+
+    @Override
+    public int getLearnedCount(long setId, int minViews) {
+        try (Cursor cursor = database.rawQuery(wordTable.getViewedCountStatement(setId, minViews), null)) {
             cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
+            return cursor.getInt(0);
+        }
+    }
 
-                words.add(wordTable.toEntity(cursor));
-                cursor.moveToNext();
-            }
+    @Override
+    public int getWordsToReviewCount(long setId) {
+        try (Cursor cursor = database.rawQuery(wordTable.getWordsToReviewCountStatement(setId), null)) {
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
+    }
 
-            return words;
+    @Override
+    public int getDoneWordsCount(long setId) {
+        try (Cursor cursor = database.rawQuery(wordTable.getDoneWordsCountStatement(setId), null)) {
+            cursor.moveToFirst();
+            return cursor.getInt(0);
         }
     }
 

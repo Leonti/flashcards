@@ -21,7 +21,7 @@ import rocks.leonti.flashcards.model.Word;
 public class CardsActivity extends ActionBarActivity {
 
     public static String WORD_SET_ID = "wordSetId";
-    public static String LEARN_SET_OFFSET = "learnSetOffset";
+    public static String WORD_IDS = "wordIds";
 
     private Toolbar toolbar;
 
@@ -45,13 +45,12 @@ public class CardsActivity extends ActionBarActivity {
         viewPager = (ViewPager) findViewById(R.id.pager);
 
         long setId = getIntent().getLongExtra(WORD_SET_ID, -1);
-        int learnSetOffset = getIntent().getIntExtra(LEARN_SET_OFFSET, 0);
-        int wordsPerSet = new Settings(this).getWordsPerSet();
+        long[] wordIds = getIntent().getLongArrayExtra(WORD_IDS);
 
         try (WordDao wordDao = new WordDaoImpl(this)) {
             wordDao.open();
 
-            pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), setId, learnSetOffset, wordsPerSet);
+            pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager(), setId, wordIds);
             viewPager.setAdapter(pagerAdapter);
             viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                 @Override
@@ -118,11 +117,11 @@ public class CardsActivity extends ActionBarActivity {
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
         private final List<Word> words;
 
-        public ScreenSlidePagerAdapter(FragmentManager fm, long setId, int learnSetOffset, int wordsPerSet) {
+        public ScreenSlidePagerAdapter(FragmentManager fm, long setId, long[] wordIds) {
             super(fm);
             try (WordDao wordDao = new WordDaoImpl(CardsActivity.this)) {
                 wordDao.open();
-                this.words = wordDao.getWords(setId, wordsPerSet, learnSetOffset * wordsPerSet);
+                this.words = wordDao.getWords(wordIds);
             }
         }
 

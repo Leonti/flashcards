@@ -27,4 +27,8 @@ public class Settings {
     private SharedPreferences getSettings() {
         return context.getSharedPreferences("Settings", 0);
     }
+
+    public int getMinViews() {
+        return 2;
+    }
 }

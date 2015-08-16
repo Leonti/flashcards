@@ -69,9 +69,8 @@ public class MainActivity extends ActionBarActivity {
                 Log.i("MAIN ACTIVITY: ", "Set selected position " + position);
 
                 WordSet wordSet = (WordSet) wordSetListAdapter.getItem(position);
-           //     Intent intent = new Intent(MainActivity.this, CardsActivity.class);
-                Intent intent = new Intent(MainActivity.this, LearnActivity.class);
-                intent.putExtra(LearnActivity.WORD_SET_ID, wordSet.id);
+                Intent intent = new Intent(MainActivity.this, ModeSelectorActivity.class);
+                intent.putExtra(ModeSelectorActivity.WORD_SET_ID, wordSet.id);
                 startActivity(intent);
             }
         });

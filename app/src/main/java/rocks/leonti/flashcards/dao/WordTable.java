@@ -3,6 +3,7 @@ package rocks.leonti.flashcards.dao;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,7 +25,7 @@ public class WordTable extends DbTable<Word> {
     public static String COLUMN_RELATED_WORDS = "relatedWords";
     public static String COLUMN_INFO = "info";
     public static String COLUMN_VIEWS = "views";
-    public static String COLUMN_REVIEW = "review";
+    public static String COLUMN_REVIEW_STATUS = "review_status";
 
     @Override
     protected String getTable() {
@@ -43,7 +44,7 @@ public class WordTable extends DbTable<Word> {
                 + COLUMN_USAGE + " text not null, "
                 + COLUMN_RELATED_WORDS + " text not null, "
                 + COLUMN_VIEWS + " integer not null, "
-                + COLUMN_REVIEW + " text not null, "
+                + COLUMN_REVIEW_STATUS + " text not null, "
                 + COLUMN_INFO + " text not null);";
     }
 
@@ -60,7 +61,7 @@ public class WordTable extends DbTable<Word> {
         values.put(COLUMN_RELATED_WORDS, toJsonString(word.relatedWords));
         values.put(COLUMN_INFO, word.info);
         values.put(COLUMN_VIEWS, word.views);
-        values.put(COLUMN_REVIEW, word.review.name());
+        values.put(COLUMN_REVIEW_STATUS, word.review.name());
 
         return values;
     }
@@ -78,7 +79,7 @@ public class WordTable extends DbTable<Word> {
         List<String> relatedWords = fromJsonString(cursor.getString(cursor.getColumnIndex(COLUMN_RELATED_WORDS)));
         String info = cursor.getString(cursor.getColumnIndex(COLUMN_INFO));
         int views = cursor.getInt(cursor.getColumnIndex(COLUMN_VIEWS));
-        Word.Review review = Word.Review.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW)));
+        Word.Review review = Word.Review.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_REVIEW_STATUS)));
 
         return new Word(id, wordSetId, word, types, pronunciation, definition, usage, relatedWords, info, views, review);
     }
@@ -87,8 +88,37 @@ public class WordTable extends DbTable<Word> {
         return "SELECT * FROM " + getTable() + " WHERE " + COLUMN_WORD_SET_ID + "=" + wordSetId + " ORDER BY _id LIMIT " + limit + " OFFSET " + offset;
     }
 
+    public String queryWithOffset(long wordSetId, int limit, int offset, Word.Review review) {
+        return "SELECT * FROM " + getTable() + " WHERE " + COLUMN_WORD_SET_ID + "=" + wordSetId
+                + " AND " + COLUMN_REVIEW_STATUS + " = \"" + review.name() + "\"" + " ORDER BY _id LIMIT " + limit + " OFFSET " + offset;
+    }
+
+    public String queryForIds(long[] wordIds) {
+        String ids = "";
+        for (int i = 0; i < wordIds.length; i++) {
+            ids += "" + wordIds[i];
+            if (i < wordIds.length - 1) {
+                ids += ", ";
+            }
+        }
+
+        return "SELECT * FROM " + getTable() + " WHERE _id IN(" + ids + ") ORDER BY _id";
+    }
+
     public String queryById(long id) {
         return "SELECT * FROM " + getTable() + " WHERE _id=" + id;
+    }
+
+    public String getViewedCountStatement(long wordSetId, int minViews) {
+        return "SELECT COUNT(*) FROM " + getTable() + " WHERE " + COLUMN_WORD_SET_ID + "=" + wordSetId + " AND " + COLUMN_VIEWS + " >= " + minViews;
+    }
+
+    public String getWordsToReviewCountStatement(long wordSetId) {
+        return "SELECT COUNT(*) FROM " + getTable() + " WHERE " + COLUMN_WORD_SET_ID + "=" + wordSetId + " AND " + COLUMN_REVIEW_STATUS + " = \"" + Word.Review.REVIEW.name() + "\"";
+    }
+
+    public String getDoneWordsCountStatement(long wordSetId) {
+        return "SELECT COUNT(*) FROM " + getTable() + " WHERE " + COLUMN_WORD_SET_ID + "=" + wordSetId + " AND " + COLUMN_REVIEW_STATUS + " = \"" + Word.Review.DONE.name() + "\"";
     }
 
     public String increaseViewsStatement(long id) {
@@ -96,7 +126,7 @@ public class WordTable extends DbTable<Word> {
     }
 
     public String setReviewStatement(long id, Word.Review review) {
-        return "UPDATE " + getTable() + " SET " + COLUMN_REVIEW + " = '" + review.name() + "' WHERE _id=" + id;
+        return "UPDATE " + getTable() + " SET " + COLUMN_REVIEW_STATUS + " = '" + review.name() + "' WHERE _id=" + id;
     }
 
     private List<String> toStrings(List<Word.Type> types) {
@@ -143,4 +173,5 @@ public class WordTable extends DbTable<Word> {
             throw new RuntimeException(e);
         }
     }
+
 }

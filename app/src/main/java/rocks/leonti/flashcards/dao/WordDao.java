@@ -20,6 +20,10 @@ public interface WordDao extends AutoCloseable {
 
     List<Word> getWords(long setId, int limit, int offset);
 
+    List<Word> getWords(long setId, int limit, int offset, Word.Review review);
+
+    List<Word> getWords(long[] wordIds);
+
     void increaseView(long wordId);
 
     void setReview(long wordId, Word.Review review);
@@ -27,4 +31,10 @@ public interface WordDao extends AutoCloseable {
     void open();
 
     void close();
+
+    int getLearnedCount(long setId, int minViews);
+
+    int getWordsToReviewCount(long setId);
+
+    int getDoneWordsCount(long setId);
 }

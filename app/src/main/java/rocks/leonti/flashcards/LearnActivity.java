@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,6 +28,8 @@ public class LearnActivity extends ActionBarActivity {
 
     public static String WORD_SET_ID = "setId";
 
+    private LearnSetListAdapter learnSetListAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,8 @@ public class LearnActivity extends ActionBarActivity {
         final long wordSetId = intent.getLongExtra(WORD_SET_ID, -1);
 
         ListView learnSetList = (ListView) findViewById(R.id.learn_set_list);
-        final LearnSetListAdapter learnSetListAdapter = new LearnSetListAdapter(this, wordSetId, new Settings(this).getWordsPerSet());
+        final Settings settings = new Settings(this);
+        learnSetListAdapter = new LearnSetListAdapter(this, wordSetId, settings.getWordsPerSet(), settings.getMinViews());
         learnSetList.setAdapter(learnSetListAdapter);
 
         learnSetList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -52,22 +56,52 @@ public class LearnActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(LearnActivity.this, CardsActivity.class);
                 intent.putExtra(CardsActivity.WORD_SET_ID, wordSetId);
-                intent.putExtra(CardsActivity.LEARN_SET_OFFSET, position);
-                startActivity(intent);
+
+                try (WordDao wordDao = new WordDaoImpl(LearnActivity.this)) {
+                    wordDao.open();
+
+                    List<Word> words = wordDao.getWords(wordSetId, settings.getWordsPerSet(), position * settings.getWordsPerSet());
+
+                    long[] wordIds = new long[words.size()];
+                    for (int i = 0; i < words.size(); i++) {
+                        wordIds[i] = words.get(i).id;
+                    }
+
+                    intent.putExtra(CardsActivity.WORD_IDS, wordIds);
+                    startActivity(intent);
+                }
             }
         });
     }
 
-    public class LearnSetListAdapter extends BaseAdapter {
+    @Override
+    public void onRestart() {
+        learnSetListAdapter.notifyDataSetChanged();
+        super.onRestart();
+    }
 
-        private final Context context;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id ==  android.R.id.home) {
+            Log.i("LEARN ACTIVITY", "On home pressed");
+            super.onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class LearnSetListAdapter extends BaseAdapter {
+
         private final int wordsInSet;
+        private final int minViews;
         private final LayoutInflater layoutInflater;
         private final WordSet wordSet;
 
-        public LearnSetListAdapter(Context context, long wordSetId, int wordsInSet) {
-            this.context = context;
+        public LearnSetListAdapter(Context context, long wordSetId, int wordsInSet, int minViews) {
             this.wordsInSet = wordsInSet;
+            this.minViews = minViews;
             this.layoutInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -133,9 +167,47 @@ public class LearnActivity extends ActionBarActivity {
             TextView learnSetWords = (TextView) view.findViewById(R.id.learn_set_words);
             learnSetWords.setText(setWords + "...");
             TextView learnSetStats = (TextView) view.findViewById(R.id.learn_set_stats);
-            learnSetStats.setText("1 to review, 10 learned");
+            String stats = String.format("%d to review, %d learned", getToReviewCount(words), getLearnedCount(words, minViews));
+            int doneCount = getDoneCount(words);
+            if (doneCount > 0) {
+                stats += String.format(", %d done", doneCount);
+            }
+            learnSetStats.setText(stats);
 
             return view;
+        }
+
+        private int getToReviewCount(List<Word> words) {
+            int count = 0;
+
+            for (Word word : words) {
+                if (word.review == Word.Review.REVIEW) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private int getDoneCount(List<Word> words) {
+            int count = 0;
+
+            for (Word word : words) {
+                if (word.review == Word.Review.DONE) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        private int getLearnedCount(List<Word> words, int minViews) {
+            int count = 0;
+
+            for (Word word : words) {
+                if (word.views >= minViews) {
+                    count++;
+                }
+            }
+            return count;
         }
     }
 }
