@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 public class Settings {
 
     private static String WORDS_PER_SET = "wordsPerSet";
+    private static String MIN_VIEWS = "minViews";
 
     private final Context context;
 
@@ -24,11 +25,18 @@ public class Settings {
         editor.commit();
     }
 
+    public void setMinViews(int minViews) {
+        SharedPreferences.Editor editor = getSettings().edit();
+
+        editor.putInt(MIN_VIEWS, minViews);
+        editor.commit();
+    }
+
     private SharedPreferences getSettings() {
         return context.getSharedPreferences("Settings", 0);
     }
 
     public int getMinViews() {
-        return 2;
+        return getSettings().getInt(MIN_VIEWS, 2);
     }
 }

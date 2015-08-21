@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context="rocks.leonti.flashcards.SettingsActivity">
+    tools:context="rocks.leonti.flashcards.SettingsActivity"
+    android:weightSum="1">
 
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
@@ -12,27 +13,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/words_per_set"
-            android:id="@+id/words_per_set_label"
-            android:textSize="16dp"
-            android:textIsSelectable="false" />
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp">
 
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:entries="@array/words_per_set"
-            android:id="@+id/words_per_set"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/words_per_set_label" />
-        </RelativeLayout>
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/words_per_set"
+                    android:id="@+id/words_per_set_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textIsSelectable="false"
+                    android:layout_column="0" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/words_per_set"
+                    android:id="@+id/words_per_set"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_column="1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/min_views"
+                    android:id="@+id/min_views_label"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_column="0" />
+
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/min_views"
+                    android:id="@+id/min_views"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:layout_column="1" />
+            </TableRow>
+        </TableLayout>
 
 
 </LinearLayout>

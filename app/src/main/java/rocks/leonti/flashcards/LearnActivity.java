@@ -30,6 +30,8 @@ public class LearnActivity extends ActionBarActivity {
 
     private LearnSetListAdapter learnSetListAdapter;
 
+    private long wordSetId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,11 @@ public class LearnActivity extends ActionBarActivity {
 
         Intent intent = getIntent();
 
-        final long wordSetId = intent.getLongExtra(WORD_SET_ID, -1);
+        if (savedInstanceState != null) {
+            wordSetId = savedInstanceState.getLong(WORD_SET_ID);
+        } else {
+            wordSetId = intent.getLongExtra(WORD_SET_ID, -1);
+        }
 
         ListView learnSetList = (ListView) findViewById(R.id.learn_set_list);
         final Settings settings = new Settings(this);
@@ -75,6 +81,13 @@ public class LearnActivity extends ActionBarActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(WORD_SET_ID, wordSetId);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void onRestart() {
         learnSetListAdapter.notifyDataSetChanged();
         super.onRestart();
@@ -85,7 +98,6 @@ public class LearnActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id ==  android.R.id.home) {
-            Log.i("LEARN ACTIVITY", "On home pressed");
             super.onBackPressed();
         }
 
@@ -174,7 +186,23 @@ public class LearnActivity extends ActionBarActivity {
             }
             learnSetStats.setText(stats);
 
+            if (isSetDone(words, minViews)) {
+                view.setAlpha(0.6f);
+            }
+
             return view;
+        }
+
+        private boolean isSetDone(List<Word> words, int minViews) {
+
+            for (Word word : words) {
+                if (word.review != Word.Review.DONE
+                        && word.views < minViews) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private int getToReviewCount(List<Word> words) {

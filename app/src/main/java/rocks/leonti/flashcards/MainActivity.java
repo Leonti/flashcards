@@ -1,7 +1,9 @@
 package rocks.leonti.flashcards;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -37,7 +39,7 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle drawerToggle;
     private ListView leftDrawerList;
     private ArrayAdapter<String> navigationDrawerAdapter;
-    private String[] leftSliderData = {"Learn", "Review", "Settings", "About"};
+    private String[] leftSliderData = {"Settings", "About"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,17 +77,26 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Please wait, this might take a while ...");
+
         Unpacker unpacker = new Unpacker(this, new Handler(), new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Starting to import",
+                Toast.makeText(getApplicationContext(), "Importing new words",
                         Toast.LENGTH_SHORT).show();
+                progressDialog.show();
             }
         }, new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(), "Import is finished",
+                Toast.makeText(getApplicationContext(), "Import is done",
                         Toast.LENGTH_SHORT).show();
+                progressDialog.hide();
                 wordSetListAdapter.notifyDataSetChanged();
             }
         });
@@ -96,8 +107,11 @@ public class MainActivity extends ActionBarActivity {
     private void selectItem(int position) {
 
         Log.i("DRAWER", "Drawer selected position: " + position);
-        if (position == 2) {
+        if (position == 0) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        } else if (position == 1) {
+            Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
         }
 

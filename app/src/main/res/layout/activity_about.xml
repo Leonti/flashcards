@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent"
-    tools:context="rocks.leonti.flashcards.ReviewActivity">
+    tools:context="rocks.leonti.flashcards.SettingsActivity"
+    android:weightSum="1">
 
     <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
@@ -12,19 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <ListView
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/review_list"
-        android:layout_gravity="center_horizontal" />
+        android:layout_height="wrap_content"></LinearLayout>
 
     <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/empty_list_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_margin="20dp" />
+        android:text="Eloquence"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal" />
+
 
 </LinearLayout>

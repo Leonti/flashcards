@@ -28,23 +28,28 @@ public class ReviewActivity extends ActionBarActivity {
 
     private ReviewListAdapter reviewListAdapter;
 
+    private long wordSetId;
+    private Word.Review reviewStatus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_review);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
+        if (savedInstanceState != null) {
+            wordSetId = savedInstanceState.getLong(WORD_SET_ID);
+            reviewStatus = Word.Review.valueOf(savedInstanceState.getString(REVIEW_STATUS));
+        } else {
+            Intent intent = getIntent();
+            wordSetId = intent.getLongExtra(WORD_SET_ID, -1);
+            reviewStatus = Word.Review.valueOf(intent.getStringExtra(REVIEW_STATUS));
+        }
+        toolbar.setTitle(reviewStatus == Word.Review.REVIEW ? "Review" : "Done");
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDefaultDisplayHomeAsUpEnabled(true);
-
-        Intent intent = getIntent();
-
-        final long wordSetId = intent.getLongExtra(WORD_SET_ID, -1);
-        final Word.Review reviewStatus = Word.Review.valueOf(intent.getStringExtra(REVIEW_STATUS));
-
-        toolbar.setTitle(reviewStatus == Word.Review.REVIEW ? "Review" : "Done");
 
         ListView reviewList = (ListView) findViewById(R.id.review_list);
         final Settings settings = new Settings(this);
@@ -72,6 +77,28 @@ public class ReviewActivity extends ActionBarActivity {
                 }
             }
         });
+
+        TextView noItemsMessage = (TextView) findViewById(R.id.empty_list_message);
+
+        try (WordDao wordDao = new WordDaoImpl(ReviewActivity.this)) {
+            wordDao.open();
+
+            List<Word> words = wordDao.getWords(wordSetId, settings.getWordsPerSet(), 0, reviewStatus);
+
+            if (words.size() == 0) {
+                noItemsMessage.setVisibility(View.VISIBLE);
+                reviewList.setVisibility(View.GONE);
+                noItemsMessage.setText(reviewStatus == Word.Review.REVIEW ? "No words have been marked \"To Review\"" : "No words have been marked as \"Done\"");
+            }
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(WORD_SET_ID, wordSetId);
+        savedInstanceState.putString(REVIEW_STATUS, reviewStatus.name());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -84,7 +111,7 @@ public class ReviewActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id ==  android.R.id.home) {
+        if (id == android.R.id.home) {
             Log.i("REVIEW ACTIVITY", "On home pressed");
             super.onBackPressed();
         }
@@ -115,14 +142,14 @@ public class ReviewActivity extends ActionBarActivity {
                 int wordCount = wordDao.getWordsToReviewCount(wordSetId);
 
                 if (wordCount % wordsPerSet == 0) {
-                    return wordCount/wordsPerSet;
+                    return wordCount / wordsPerSet;
                 }
 
-                if (wordCount/wordsPerSet < 1) {
+                if (wordCount / wordsPerSet < 1) {
                     return 1;
                 }
 
-                return wordCount/wordsPerSet + 1;
+                return wordCount / wordsPerSet + 1;
             }
         }
 

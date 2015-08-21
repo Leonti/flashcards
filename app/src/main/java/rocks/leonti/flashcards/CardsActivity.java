@@ -22,12 +22,17 @@ public class CardsActivity extends ActionBarActivity {
 
     public static String WORD_SET_ID = "wordSetId";
     public static String WORD_IDS = "wordIds";
+    public static String CURRENT_WORD_POSITION = "currentWordPosition";
 
     private Toolbar toolbar;
 
     private ViewPager viewPager;
     private ScreenSlidePagerAdapter pagerAdapter;
     private Menu actionMenu;
+
+    private long setId;
+    long[] wordIds;
+    private int currentWordPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +49,16 @@ public class CardsActivity extends ActionBarActivity {
         // Instantiate a ViewPager and a PagerAdapter.
         viewPager = (ViewPager) findViewById(R.id.pager);
 
-        long setId = getIntent().getLongExtra(WORD_SET_ID, -1);
-        long[] wordIds = getIntent().getLongArrayExtra(WORD_IDS);
+        if (savedInstanceState != null) {
+            setId = savedInstanceState.getLong(WORD_SET_ID);
+            wordIds = savedInstanceState.getLongArray(WORD_IDS);
+            currentWordPosition = savedInstanceState.getInt(CURRENT_WORD_POSITION);
+        } else {
+            setId = getIntent().getLongExtra(WORD_SET_ID, -1);
+            wordIds = getIntent().getLongArrayExtra(WORD_IDS);
+            currentWordPosition = 0;
+            increaseViewCount(wordIds[0]);
+        }
 
         try (WordDao wordDao = new WordDaoImpl(this)) {
             wordDao.open();
@@ -61,9 +74,13 @@ public class CardsActivity extends ActionBarActivity {
                 @Override
                 public void onPageSelected(int position) {
                     Log.i("CARDS ACTIVITY", " Page changed " + position);
-                    Word word = ((ScreenSlidePagerAdapter) viewPager.getAdapter()).getWord(position);
-                    updateReviewIcon(word);
-                    increaseViewCount(word.id);
+                    currentWordPosition = position;
+                    // FIXME don't use actionMenu as an indicator
+                    if (actionMenu != null) {
+                        Word word = ((ScreenSlidePagerAdapter) viewPager.getAdapter()).getWord(position);
+                        updateReviewIcon(word);
+                        increaseViewCount(word.id);
+                    }
                 }
 
                 @Override
@@ -72,6 +89,15 @@ public class CardsActivity extends ActionBarActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putLong(WORD_SET_ID, setId);
+        savedInstanceState.putLongArray(WORD_IDS, wordIds);
+        savedInstanceState.putInt(CURRENT_WORD_POSITION, currentWordPosition);
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -152,7 +178,7 @@ public class CardsActivity extends ActionBarActivity {
         Log.i("CARDS", "On create Options menu");
         getMenuInflater().inflate(R.menu.menu_cards, menu);
         this.actionMenu = menu;
-        Word word = ((ScreenSlidePagerAdapter) viewPager.getAdapter()).getWord(0);
+        Word word = ((ScreenSlidePagerAdapter) viewPager.getAdapter()).getWord(currentWordPosition);
         updateReviewIcon(word);
         increaseViewCount(word.id);
         return true;
