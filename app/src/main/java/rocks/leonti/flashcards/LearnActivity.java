@@ -75,6 +75,7 @@ public class LearnActivity extends ActionBarActivity {
 
                     intent.putExtra(CardsActivity.WORD_IDS, wordIds);
                     startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
             }
         });

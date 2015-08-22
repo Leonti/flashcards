@@ -60,16 +60,19 @@ public class ModeSelectorActivity extends ActionBarActivity {
                     Intent intent = new Intent(ModeSelectorActivity.this, LearnActivity.class);
                     intent.putExtra(LearnActivity.WORD_SET_ID, wordSetId);
                     startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 } else if (position ==  1) {
                     Intent intent = new Intent(ModeSelectorActivity.this, ReviewActivity.class);
                     intent.putExtra(ReviewActivity.WORD_SET_ID, wordSetId);
                     intent.putExtra(ReviewActivity.REVIEW_STATUS, Word.Review.REVIEW.name());
                     startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 } else if (position == 2) {
                     Intent intent = new Intent(ModeSelectorActivity.this, ReviewActivity.class);
                     intent.putExtra(ReviewActivity.WORD_SET_ID, wordSetId);
                     intent.putExtra(ReviewActivity.REVIEW_STATUS, Word.Review.DONE.name());
                     startActivity(intent);
+                    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 }
 
             }

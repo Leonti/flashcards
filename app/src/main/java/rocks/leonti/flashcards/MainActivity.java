@@ -1,5 +1,6 @@
 package rocks.leonti.flashcards;
 
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -74,6 +75,7 @@ public class MainActivity extends ActionBarActivity {
                 Intent intent = new Intent(MainActivity.this, ModeSelectorActivity.class);
                 intent.putExtra(ModeSelectorActivity.WORD_SET_ID, wordSet.id);
                 startActivity(intent);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
 
@@ -110,9 +112,11 @@ public class MainActivity extends ActionBarActivity {
         if (position == 0) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         } else if (position == 1) {
             Intent intent = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
 
         // Highlight the selected item, update the title, and close the drawer

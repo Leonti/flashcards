@@ -41,4 +41,7 @@
     <string name="words_per_set">Words in a set:</string>
     <string name="min_views">Min word views:</string>
 
+    <string name="app_about"><b>Eloquence</b> is an open sourced flashcards app for expanding your vocabulary.\n\nGithub: <a href="https://github.com/Leonti/flashcards">https://github.com/Leonti/flashcards</a>\n
+    </string>
+
 </resources>
