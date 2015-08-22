@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.JsonReader;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -72,8 +73,8 @@ public class Unpacker extends AsyncTask<Void, Void, Void> {
             wordDao.open();
 
             WordSet wordSet = getWordSet(setPath);
-            long wordSetId = wordDao.createWordSet(wordSet);
 
+            long wordSetId = wordDao.createWordSet(wordSet);
             try (
                     InputStream in = context.getAssets().open(setPath);
                     JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
@@ -81,7 +82,8 @@ public class Unpacker extends AsyncTask<Void, Void, Void> {
 
                 reader.beginObject();
 
-
+                // TODO - use a stream instead of reading everything into memory
+                List<Word> words = new LinkedList<>();
                 while (reader.hasNext()) {
                     String field = reader.nextName();
 
@@ -89,7 +91,7 @@ public class Unpacker extends AsyncTask<Void, Void, Void> {
                         reader.beginArray();
 
                         while (reader.hasNext()) {
-                            wordDao.createWord(parseWord(reader, wordSetId));
+                            words.add(parseWord(reader, wordSetId));
                         }
 
                         reader.endArray();
@@ -99,6 +101,7 @@ public class Unpacker extends AsyncTask<Void, Void, Void> {
                 }
 
                 reader.endObject();
+                wordDao.createWords(words);
 
                 markAsImported(setPath);
             } catch (IOException e) {
@@ -120,6 +123,7 @@ public class Unpacker extends AsyncTask<Void, Void, Void> {
         List<String> relatedWords = null;
         String info = null;
 
+        long tic = System.currentTimeMillis();
         reader.beginObject();
         while (reader.hasNext()) {
             String field = reader.nextName();

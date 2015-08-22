@@ -10,7 +10,7 @@ public interface WordDao extends AutoCloseable {
 
     long createWordSet(WordSet wordSet);
 
-    long createWord(Word word);
+    void createWords(List<Word> words);
 
     Word getWord(long id);
 

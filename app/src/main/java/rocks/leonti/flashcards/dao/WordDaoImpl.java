@@ -33,9 +33,17 @@ public class WordDaoImpl implements WordDao {
     }
 
     @Override
-    public long createWord(Word word) {
-        return database.insert(wordTable.getTable(), null,
-                wordTable.toContentValues(word));
+    public void createWords(List<Word> words) {
+
+        database.beginTransaction();
+
+        for (Word word : words) {
+            database.insert(wordTable.getTable(), null,
+                    wordTable.toContentValues(word));
+        }
+
+        database.setTransactionSuccessful();
+        database.endTransaction();
     }
 
     @Override
